@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol HAMKeyboardDelegate: AnyObject {
+public protocol HAMKeyboardDelegate: AnyObject {
     func keyboard(_ keyboard: HAMKeyboard, string: String)
     func keyboardShouldReturnDelete(_ keyboard: HAMKeyboard)
     func keyboardShouldReturnSearch(_ keyboard: HAMKeyboard)

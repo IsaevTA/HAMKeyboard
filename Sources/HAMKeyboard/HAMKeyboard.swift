@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 public class HAMKeyboard: UIView {
-    weak var delegate: HAMKeyboardDelegate?
+    public weak var delegate: HAMKeyboardDelegate?
 
     private lazy var backspaceButton: HAMKeyboardButton = {
         let button = HAMKeyboardButton("")
@@ -47,12 +47,6 @@ public class HAMKeyboard: UIView {
     public init() {
         super.init(frame: .zero)
         autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        setupUI()
-    }
-    
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
         
         setupUI()
     }

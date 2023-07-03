@@ -1,6 +1,6 @@
 //
 //  HAMKeyboardButton.swift
-//  
+//
 //
 //  Created by Timur Isaev on 27.06.2023.
 //
@@ -8,12 +8,10 @@
 import UIKit
 
 class HAMKeyboardButton: UIButton {
-    init(_ text: String, _ target: Any?, action: Selector) {
+    init(_ text: String) {
         super.init(frame: .zero)
-
         self.setTitle(text, for: .normal)
-        self.addTarget(target, action: action, for: .touchUpInside)
-        
+
         setupUI()
     }
     

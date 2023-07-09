@@ -63,7 +63,7 @@ private extension HAMKeyboard {
         let stack = UIStackView(frame: .zero)
         stack.axis = .horizontal
         stack.alignment = .fill
-        stack.distribution = .fillProportionally
+        stack.distribution = .fillEqually
         stack.spacing = 8
 
         line.getArrayButtons.forEach { button in

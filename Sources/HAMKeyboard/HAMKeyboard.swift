@@ -6,16 +6,18 @@
 //
 
 import UIKit
-import SnapKit
 
 public class HAMKeyboard: UIView {
     public weak var delegate: HAMKeyboardDelegate?
 
+    private var typeKeybaord: HAMKeyboardType = .search
+    
     private lazy var backspaceButton: HAMKeyboardButton = {
         let button = HAMKeyboardButton("")
         button.setImage(UIImage(systemName: "delete.left", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
         button.tintColor = UIColor.white
         button.addTarget(self, action: #selector(tapBackspaceButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -23,6 +25,7 @@ public class HAMKeyboard: UIView {
     private lazy var slashButton: HAMKeyboardButton = {
         let button = HAMKeyboardButton("/")
         button.addTarget(self, action: #selector(tapButton(button:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
@@ -32,21 +35,24 @@ public class HAMKeyboard: UIView {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         button.backgroundColor = UIColor.systemRed
         button.addTarget(self, action: #selector(tapCancelButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    private lazy var searchButton: HAMKeyboardButton = {
-        let button = HAMKeyboardButton("SEARCH")
+    private lazy var returnButton: HAMKeyboardButton = {
+        let button = HAMKeyboardButton(typeKeybaord.title)
         button.backgroundColor = UIColor.blue
-        button.addTarget(self, action: #selector(tapSearchButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(tapReturnButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    public init() {
+    public init(type: HAMKeyboardType = .search) {
         super.init(frame: .zero)
         autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.typeKeybaord = type
         
         setupUI()
     }
@@ -65,7 +71,8 @@ private extension HAMKeyboard {
         stack.alignment = .fill
         stack.distribution = .fillEqually
         stack.spacing = 8
-
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
         line.getArrayButtons.forEach { button in
             button.addTarget(self, action: #selector(tapButton(button:)), for: .touchUpInside)
             stack.addArrangedSubview(button)
@@ -77,67 +84,52 @@ private extension HAMKeyboard {
     func setupUI() {
         let stackNumberLine = createStack(line: .numberLine)
         addSubview(stackNumberLine)
-        stackNumberLine.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(10)
-            make.left.right.equalToSuperview().inset(16)
-        }
+        stackNumberLine.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
+        stackNumberLine.leftAnchor.constraint(equalTo: leftAnchor, constant: 16).isActive = true
+        stackNumberLine.rightAnchor.constraint(equalTo: rightAnchor, constant: -16).isActive = true
 
         let stackFirslLine = createStack(line: .firslLine)
         addSubview(stackFirslLine)
-        stackFirslLine.snp.makeConstraints { make in
-            make.top.equalTo(stackNumberLine.snp.bottom).offset(10)
-            make.left.right.equalToSuperview().inset(16)
-        }
+        stackFirslLine.topAnchor.constraint(equalTo: stackNumberLine.bottomAnchor, constant: 10).isActive = true
+        stackFirslLine.leftAnchor.constraint(equalTo: leftAnchor, constant: 16).isActive = true
+        stackFirslLine.rightAnchor.constraint(equalTo: rightAnchor, constant: -16).isActive = true
+
 
         let stackSecondLine = createStack(line: .secondLine)
         addSubview(stackSecondLine)
-        stackSecondLine.snp.makeConstraints { make in
-            make.top.equalTo(stackFirslLine.snp.bottom).offset(10)
-            
-            make.left.equalTo(getElevent(views: stackFirslLine.arrangedSubviews, index: 0).snp.centerX)
-            make.right.equalTo(getElevent(views: stackFirslLine.arrangedSubviews, index: stackFirslLine.arrangedSubviews.count - 1).snp.centerX)
-        }
+        stackSecondLine.topAnchor.constraint(equalTo: stackFirslLine.bottomAnchor, constant: 10).isActive = true
+        stackSecondLine.leftAnchor.constraint(equalTo: getElevent(views: stackFirslLine.arrangedSubviews, index: 0).centerXAnchor).isActive = true
+        stackSecondLine.rightAnchor.constraint(equalTo: getElevent(views: stackFirslLine.arrangedSubviews, index: stackFirslLine.arrangedSubviews.count - 1).centerXAnchor).isActive = true
 
         let stackThirdLine = createStack(line: .thirdLine)
         addSubview(stackThirdLine)
-        stackThirdLine.snp.makeConstraints { make in
-            make.top.equalTo(stackSecondLine.snp.bottom).offset(10)
-            
-            make.left.equalTo(getElevent(views: stackSecondLine.arrangedSubviews, index: 1).snp.left)
-            make.right.equalTo(getElevent(views: stackSecondLine.arrangedSubviews, index: stackSecondLine.arrangedSubviews.count - 2).snp.right)
-        }
+        stackThirdLine.topAnchor.constraint(equalTo: stackSecondLine.bottomAnchor, constant: 10).isActive = true
+        stackThirdLine.leftAnchor.constraint(equalTo: getElevent(views: stackSecondLine.arrangedSubviews, index: 1).leftAnchor).isActive = true
+        stackThirdLine.rightAnchor.constraint(equalTo: getElevent(views: stackSecondLine.arrangedSubviews, index: stackSecondLine.arrangedSubviews.count - 2).rightAnchor).isActive = true
 
         addSubview(backspaceButton)
-        backspaceButton.snp.makeConstraints { make in
-            make.height.equalTo(stackThirdLine.snp.height)
-            make.centerY.equalTo(stackThirdLine.snp.centerY)
-            make.left.equalTo(stackThirdLine.snp.right).inset(-10)
-            make.right.equalToSuperview().inset(5)
-        }
-        
-        addSubview(slashButton)
-        slashButton.snp.makeConstraints { make in
-            make.height.equalTo(stackThirdLine.snp.height)
-            make.centerY.equalTo(stackThirdLine.snp.centerY)
-            make.left.equalToSuperview().inset(5)
-            make.right.equalTo(stackThirdLine.snp.left).inset(-10)
-        }
+        backspaceButton.heightAnchor.constraint(equalTo: stackThirdLine.heightAnchor).isActive = true
+        backspaceButton.centerYAnchor.constraint(equalTo: stackThirdLine.centerYAnchor).isActive = true
+        backspaceButton.leftAnchor.constraint(equalTo: stackThirdLine.rightAnchor, constant: 10).isActive = true
+        backspaceButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -5).isActive = true
 
-        addSubview(searchButton)
-        searchButton.snp.makeConstraints { make in
-            make.top.equalTo(stackThirdLine.snp.bottom).offset(10)
-            make.height.equalTo(stackThirdLine.snp.height)
-            make.right.equalToSuperview().inset(5)
-            make.left.equalTo(getElevent(views: stackThirdLine.arrangedSubviews, index: 1).snp.left)
-        }
+        addSubview(slashButton)
+        slashButton.heightAnchor.constraint(equalTo: stackThirdLine.heightAnchor).isActive = true
+        slashButton.centerYAnchor.constraint(equalTo: stackThirdLine.centerYAnchor).isActive = true
+        slashButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 5).isActive = true
+        slashButton.rightAnchor.constraint(equalTo: stackThirdLine.leftAnchor, constant: -10).isActive = true
+
+        addSubview(returnButton)
+        returnButton.topAnchor.constraint(equalTo: stackThirdLine.bottomAnchor, constant: 10).isActive = true
+        returnButton.heightAnchor.constraint(equalTo: stackThirdLine.heightAnchor).isActive = true
+        returnButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -5).isActive = true
+        returnButton.leftAnchor.constraint(equalTo: getElevent(views: stackThirdLine.arrangedSubviews, index: 1).leftAnchor, constant: 5).isActive = true
 
         addSubview(cancelButton)
-        cancelButton.snp.makeConstraints { make in
-            make.height.equalTo(searchButton.snp.height)
-            make.centerY.equalTo(searchButton.snp.centerY)
-            make.right.equalTo(getElevent(views: stackThirdLine.arrangedSubviews, index: 0).snp.right)
-            make.left.equalToSuperview().inset(5)
-        }
+        cancelButton.heightAnchor.constraint(equalTo: returnButton.heightAnchor).isActive = true
+        cancelButton.centerYAnchor.constraint(equalTo: returnButton.centerYAnchor).isActive = true
+        cancelButton.rightAnchor.constraint(equalTo: getElevent(views: stackThirdLine.arrangedSubviews, index: 0).rightAnchor).isActive = true
+        cancelButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 5).isActive = true
     }
     
     func getElevent(views: [UIView], index: Int) -> HAMKeyboardButton {
@@ -164,7 +156,7 @@ private extension HAMKeyboard {
     }
     
     @objc
-    func tapSearchButton() {
-        delegate?.keyboardShouldReturnSearch(self)
+    func tapReturnButton() {
+        delegate?.keyboardShouldReturn(self)
     }
 }

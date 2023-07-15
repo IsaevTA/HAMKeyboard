@@ -12,11 +12,11 @@ let package = Package(
             targets: ["HAMKeyboard"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.6.0"))
+
     ],
     targets: [
         .target(
             name: "HAMKeyboard",
-            dependencies: ["SnapKit"]),
+            dependencies: []),
     ]
 )
